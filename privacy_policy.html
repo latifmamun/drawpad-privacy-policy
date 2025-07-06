@@ -1,0 +1,158 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DrawPad Privacy Policy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2 {
+            color: #000;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy for DrawPad</h1>
+        <p><strong>Last Updated: July 6, 2025</strong></p>
+        <p>DrawPad ("the App") is a mobile application developed by Latif Mamun ("we," "us," or "our"). This Privacy Policy explains how we collect, use, disclose, and protect your information when you use the App. By using DrawPad, you agree to the terms outlined in this Privacy Policy. If you do not agree, please do not use the App.</p>
+
+        <h2>1. Information We Collect</h2>
+        <h3>a. Personal Information</h3>
+        <p>The App does not collect personally identifiable information (e.g., name, email address, or phone number) unless explicitly provided by you. The following data may be accessed or stored:</p>
+        <ul>
+            <li><strong>Drawings and Images</strong>: DrawPad allows you to create and save drawings as PNG files on your device’s internal storage or external storage (e.g., Pictures/DrawPad directory). When you choose to save a drawing to your device’s gallery, the App accesses the device’s storage to store these images.</li>
+            <li><strong>File Paths</strong>: The App stores file paths of your drawings to display them in the gallery feature.</li>
+        </ul>
+
+        <h3>b. Permissions</h3>
+        <p>DrawPad requests the following permissions:</p>
+        <ul>
+            <li><strong>Storage (READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)</strong>: Used to save drawings to your device’s gallery and read drawings for display in the App’s gallery feature. These permissions are only requested on devices running Android 9 (API 28) or lower, as newer Android versions use scoped storage.</li>
+            <li><strong>Internet</strong>: Used to load advertisements from Google AdMob.</li>
+        </ul>
+
+        <h3>c. Advertising Data</h3>
+        <p>DrawPad integrates Google AdMob to display banner and interstitial ads. AdMob may collect:</p>
+        <ul>
+            <li><strong>Device Information</strong>: Such as device ID, device type, operating system, and IP address.</li>
+            <li><strong>Usage Data</strong>: Information about your interactions with ads, such as ad impressions or clicks.</li>
+            <li><strong>Location Data</strong>: Approximate location (e.g., country or region) may be inferred from your IP address for ad personalization.</li>
+        </ul>
+        <p>AdMob may use this data to serve personalized or non-personalized ads, depending on your device settings. For more details, see <a href="https://policies.google.com/privacy">Google’s Privacy Policy</a>.</p>
+
+        <h3>d. Automatically Collected Data</h3>
+        <p>The App does not collect analytics data directly. However, Google AdMob may collect anonymous usage data to improve ad performance, as described in their privacy policy.</p>
+
+        <h2>2. How We Use Your Information</h2>
+        <p>We use the information we collect for the following purposes:</p>
+        <ul>
+            <li><strong>App Functionality</strong>: To save, load, and display your drawings in the App’s gallery and full-screen view.</li>
+            <li><strong>Advertisements</strong>: To display banner and interstitial ads via Google AdMob. Interstitial ads are shown no more than once every 24 hours when viewing a drawing in full-screen mode.</li>
+            <li><strong>Storage Management</strong>: To allow you to save drawings to your device’s gallery and delete drawings from the App’s storage.</li>
+        </ul>
+        <p>We do not use your data for any other purpose, such as marketing or sharing with third parties, except as described below.</p>
+
+        <h2>3. Data Sharing and Disclosure</h2>
+        <p>We do not share your personal information with third parties except in the following cases:</p>
+        <ul>
+            <li><strong>Google AdMob</strong>: AdMob, a third-party ad network, may collect and process device and usage data to serve ads. This data is subject to Google’s Privacy Policy.</li>
+            <li><strong>Legal Requirements</strong>: We may disclose information if required by law, such as in response to a court order or subpoena.</li>
+            <li><strong>App Functionality</strong>: File paths and drawings are stored locally on your device and are not shared with us or any third party unless you choose to export them (e.g., via sharing features provided by your device).</li>
+        </ul>
+
+        <h2>4. Data Storage and Security</h2>
+        <ul>
+            <li><strong>Local Storage</strong>: Drawings are stored locally on your device in the internal storage (<code>drawings</code> directory) or external storage (Pictures/DrawPad directory). These files are only accessible to the App and your device’s gallery if you save them there.</li>
+            <li><strong>Security</strong>: We take reasonable measures to protect the data stored within the App, such as using secure file handling. However, no method of storage is 100% secure, and we cannot guarantee absolute security.</li>
+        </ul>
+
+        <h2>5. Your Choices</h2>
+        <ul>
+            <li><strong>Permissions</strong>: You can deny storage permissions, but this may limit features like saving drawings to your gallery or accessing the gallery feature. You can manage permissions in your device’s settings.</li>
+            <li><strong>Ad Personalization</strong>: You can opt out of personalized ads in your device’s settings (e.g., Android’s “Opt out of Ads Personalization” setting) or through Google’s ad settings. Non-personalized ads may still be shown.</li>
+            <li><strong>Data Deletion</strong>: You can delete drawings from the App’s gallery using the delete button in the full-screen view. This removes the drawing from the App’s storage.</li>
+        </ul>
+
+        <h2>6. Children’s Privacy</h2>
+        <p>DrawPad is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected such information, we will delete it promptly. If you believe we have collected data from a child under 13, please contact us at [insert contact email].</p>
+
+        <h2>7. Third-Party Links</h2>
+        <p>The App may display ads that contain links to third-party websites or services. We are not responsible for the privacy practices of these third parties. We encourage you to review their privacy policies before interacting with them.</p>
+
+        <h2>8. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time to reflect changes in the App or legal requirements. The updated policy will be posted within the App or on our website, with the “Last Updated” date revised. Your continued use of the App after changes indicates your acceptance of the updated policy.</p>
+
+        <h2>9. Contact Us</h2>
+        <p>If you have questions or concerns about this Privacy Policy or the App’s data practices, please contact us at:</p>
+        <p><strong>Latif Mamun</strong><br>
+        Email: [md.latifmamun@gmail.com]<br>
+        Address: [Chattogram,Bangladesh]</p>
+
+        <h2>10. Additional Information for Google Play Compliance</h2>
+        <ul>
+            <li><strong>Data Safety</strong>: DrawPad collects device and usage data via Google AdMob for advertising purposes, as described above. No other personal data is collected unless explicitly provided by you.</li>
+            <li><strong>Data Deletion</strong>: You can delete all drawings stored by the App using the delete functionality in the gallery view.</li>
+            <li><strong>AdMob Compliance</strong>: AdMob ads comply with Google’s advertising policies, and we use test ad unit IDs during development to ensure compliance.</li>
+        </ul>
+
+        <p>Thank you for using DrawPad!</p>
+    </div>
+</body>
+</html>
